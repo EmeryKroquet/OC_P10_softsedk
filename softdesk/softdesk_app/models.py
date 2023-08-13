@@ -28,7 +28,9 @@ class Project(models.Model):
         ('iOS', 'iOS'),
         ('Android', 'Android'),
     ))
-    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='projects')
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='authored_projects')
+
+    #author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='projects')
 
 # Modèle pour les problèmes (issues)
 class Issue(models.Model):

@@ -26,6 +26,5 @@ urlpatterns = [
 
     path('api-auth/', include('rest_framework.urls')),
     path('api/', include('softdesk_app.urls')),  # Your app-specific URLs come first
-    #path('api/', include('users.urls')),  # Your app-specific URLs come first
-    path('api/', include(router.urls)),  # Generic router URLs come last
+    path('', include(router.urls)),  # Generic router URLs come last
 ]

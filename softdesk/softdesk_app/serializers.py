@@ -5,12 +5,14 @@ from .models import CustomUser, Project, Issue, Comment
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
+        #fields = '__all__'
         fields = ['id', 'username', 'age', 'can_be_contacted', 'can_data_be_shared']
 
 # Serializer pour le projet (Project)
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
+        #fields = '__all__'
         fields = ['id', 'name', 'description', 'type', 'author']
 
 # Serializer pour le problème (Issue)
