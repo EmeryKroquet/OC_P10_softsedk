@@ -9,19 +9,19 @@ from rest_framework.views import APIView
 
 from .models import CustomUser, Project, Issue, Comment
 from .serializers import CustomUserSerializer, ProjectSerializer, IssueSerializer, CommentSerializer
-from .permissions import IsProjectContributor, IssuePermissions
+from .permissions import IsProjectContributor, IssuePermissions, CommentPermissions
 
 
 # Views for users
 class UserListView(generics.ListCreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsProjectContributor]
 
 class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsProjectContributor]
 
 # Views for projects
 class ProjectFilter(filters.FilterSet):
@@ -36,6 +36,7 @@ class ProjectFilter(filters.FilterSet):
 class ProjectListView(generics.ListCreateAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    permission_classes = [IsProjectContributor]
     filter_backends = [DjangoFilterBackend]
     filterset_class = ProjectFilter
 
@@ -45,7 +46,7 @@ class ProjectListView(generics.ListCreateAPIView):
 class ProjectDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsProjectContributor]
 
 
 class IssueFilter(filters.FilterSet):
@@ -62,13 +63,13 @@ class IssueFilter(filters.FilterSet):
 class IssueListView(generics.ListCreateAPIView):
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IssuePermissions]
     filterset_class = IssueFilter
 
 class IssueDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    ssupermission_classes = [IssuePermissions]
 
     def get_object(self):
         pk = self.kwargs.get('pk')
@@ -78,12 +79,12 @@ class IssueDetailView(generics.RetrieveUpdateDestroyAPIView):
 class CommentListView(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [CommentPermissions]
 
 class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [CommentPermissions]
 
 
 
