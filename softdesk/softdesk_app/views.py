@@ -11,11 +11,16 @@ from .permissions import IsProjectContributor, IssuePermissions, CommentPermissi
 class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
-    permission_classes = [IsProjectContributor]
+    permission_classes = [permissions.IsAuthenticated, IsProjectContributor]
 
 class ProjectFilter(filters.FilterSet):
-    # Define your project filters here
-    ...
+    name = filters.CharFilter(lookup_expr='icontains')
+    author_id = filters.NumberFilter(field_name='author__id')
+    type = filters.CharFilter(lookup_expr='exact')
+
+    class Meta:
+        model = Project
+        fields = ['name', 'author_id', 'type']
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
@@ -41,7 +46,7 @@ class IssueFilter(filters.FilterSet):
 class IssueViewSet(viewsets.ModelViewSet):
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
-    permission_classes = [IsProjectContributor]
+    permission_classes = [permissions.IsAuthenticated, IssuePermissions]
     filterset_class = IssueFilter
 
     def get_object(self):
@@ -51,7 +56,7 @@ class IssueViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [IsProjectContributor]
+    permission_classes = [permissions.IsAuthenticated, CommentPermissions]
 
 class MySecureView(APIView):
     permission_classes = [permissions.IsAuthenticated]
