@@ -1,53 +1,31 @@
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics, permissions
-from rest_framework.generics import get_object_or_404
-
+from rest_framework import viewsets, permissions
 from django_filters import rest_framework as filters
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 
 from .models import CustomUser, Project, Issue, Comment
 from .serializers import CustomUserSerializer, ProjectSerializer, IssueSerializer, CommentSerializer
 from .permissions import IsProjectContributor, IssuePermissions, CommentPermissions
 
-
-# Views for users
-class UserListView(generics.ListCreateAPIView):
+class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = [IsProjectContributor]
 
-class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = CustomUserSerializer
-    permission_classes = [IsProjectContributor]
-
-# Views for projects
 class ProjectFilter(filters.FilterSet):
-    name = filters.CharFilter(lookup_expr='icontains')
-    author_id = filters.NumberFilter(field_name='author__id')
-    type = filters.CharFilter(lookup_expr='exact')
+    # Define your project filters here
+    ...
 
-    class Meta:
-        model = Project
-        fields = ['name', 'author_id', 'type']
-
-class ProjectListView(generics.ListCreateAPIView):
+class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-    permission_classes = [IsProjectContributor]
-    filter_backends = [DjangoFilterBackend]
+    permission_classes = [permissions.IsAuthenticated, IsProjectContributor]
+    filter_backends = [filters.DjangoFilterBackend]
     filterset_class = ProjectFilter
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-
-class ProjectDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
-    permission_classes = [IsProjectContributor]
-
 
 class IssueFilter(filters.FilterSet):
     class Meta:
@@ -60,38 +38,25 @@ class IssueFilter(filters.FilterSet):
             'project': ['exact'],
         }
 
-class IssueListView(generics.ListCreateAPIView):
+class IssueViewSet(viewsets.ModelViewSet):
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
-    permission_classes = [IssuePermissions]
+    permission_classes = [IsProjectContributor]
     filterset_class = IssueFilter
-
-class IssueDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Issue.objects.all()
-    serializer_class = IssueSerializer
-    ssupermission_classes = [IssuePermissions]
 
     def get_object(self):
         pk = self.kwargs.get('pk')
         return get_object_or_404(Issue, pk=pk)
 
-# Views for comments
-class CommentListView(generics.ListCreateAPIView):
+class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [CommentPermissions]
-
-class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_classes = [CommentPermissions]
-
-
+    permission_classes = [IsProjectContributor]
 
 class MySecureView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        user = request.user  # The authenticated user
+        user = request.user
         message = f"Hello, {user.username}! You're authenticated."
         return Response({'message': message})

@@ -29,8 +29,7 @@ class Project(models.Model):
         ('Android', 'Android'),
     ))
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='authored_projects')
-
-    #author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='projects')
+    contributors = models.ManyToManyField(CustomUser, related_name='contributed_projects')
 
 # Modèle pour les problèmes (issues)
 class Issue(models.Model):

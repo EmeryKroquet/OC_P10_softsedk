@@ -4,28 +4,23 @@ class IsProjectContributor(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
-        return obj.project.contributors.filter(id=request.user.id).exists()
 
-class ContributorPermissions(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return view.action == 'list' and request.method in permissions.SAFE_METHODS
+        project = obj.project if hasattr(obj, 'project') else None  # Get the project associated with the issue
+        return project and project.contributors.filter(id=request.user.id).exists()
 
 
 class IssuePermissions(permissions.BasePermission):
     def has_permission(self, request, view):
-        issue = view.get_object()  # Directly retrieve the issue from the view's queryset
-        project = issue.project
+        if view.action == 'list':
+            return True
 
-        return project.contributors.filter(id=request.user.id).exists() or project.author == request.user
-    """def has_permission(self, request, view):
-        issue_id = view.kwargs.get('issue_id')
-        issue = Issue.objects.get(id=issue_id)
-        project = issue.project
+        issue = view.get_object() if view.action in ['retrieve', 'update', 'partial_update', 'destroy'] else None
+        project = issue.project if issue else None
 
-        return project.contributors.filter(id=request.user.id).exists() or project.author == request.user"""""
+        return project and (project.contributors.filter(id=request.user.id).exists() or project.author == request.user)
 
 
 class CommentPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
-        # Allow all GET requests (read permissions) for the comment list view
-        return view.action == 'list' and request.method in permissions.SAFE_METHODS
+        if view.action == 'list':
+            return True
