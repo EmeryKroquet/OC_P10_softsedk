@@ -1,5 +1,5 @@
 <h3 align="center">
-    <img alt="Logo" title="#logo" width="236px" src="/assets/16007803099977_P8.png">
+    <img alt="Logo" title="#logo" src="softdesk_P10-02.png">
     <br>
 </h3>
 
@@ -57,15 +57,10 @@ alors trouver un moyen standard de traiter les données, ce qui peut se faire en
 
 ```
 Project
-├── softdesk_project
-│   ├── api
-│   ├── softdesk : répertoire contenant notre application principale
-│   │    ├── comments
-│   │    ├── contributors
-│   │    ├── issues
-│   │    ├── projects
-│   │    ├── users
-│   ├── softdesk_project : répertoire du projet django
+├── softdesk
+│   
+│   ├── softdesk_app : répertoire contenant notre application principale
+│   ├── softdesk : répertoire du projet django
 │   │    ├── settings.py : fichier de réglages django
 │   │    ├── urls.py : fichier principal des endpoints
 │   │    ├── ..
@@ -123,7 +118,7 @@ pip install -r requirements.txt
 Accédez au dossier du projet en entrant la commande:
 
 ```bash
-cd softdesk_project
+cd softdesk
 ```
 
 Procédez à une recherche de migrations en entrant lsa commande:
@@ -145,7 +140,7 @@ python manage.py migrate
 Accédez au dossier du projet avec la commande:
 
 ```bash
-cd softdesk_project
+cd softdesk
 ```
 
 Démarrez le serveur local avec la commande:
