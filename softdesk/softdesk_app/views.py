@@ -3,6 +3,7 @@ from django_filters import rest_framework as filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
+from rest_framework.pagination import PageNumberPagination
 
 from .models import CustomUser, Project, Issue, Comment
 from .serializers import CustomUserSerializer, ProjectSerializer, IssueSerializer, CommentSerializer
@@ -22,12 +23,19 @@ class ProjectFilter(filters.FilterSet):
         model = Project
         fields = ['name', 'author_id', 'type']
 
+class CustomPagination(PageNumberPagination):
+    page_size = 10  # Nombre d'éléments par page
+    page_size_query_param = 'page_size'  # Paramètre pour spécifier la taille de la page
+    max_page_size = 100  # Taille maximale de la page
+
+# Dans votre ViewSet
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     permission_classes = [permissions.IsAuthenticated, IsProjectContributor]
     filter_backends = [filters.DjangoFilterBackend]
     filterset_class = ProjectFilter
+    pagination_class = CustomPagination  # Utilisation de votre classe de pagination personnalisée
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -44,10 +52,11 @@ class IssueFilter(filters.FilterSet):
         }
 
 class IssueViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated, IssuePermissions]
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
-    permission_classes = [permissions.IsAuthenticated, IssuePermissions]
     filterset_class = IssueFilter
+    pagination_class = CustomPagination
 
     def get_object(self):
         pk = self.kwargs.get('pk')
@@ -57,7 +66,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated, CommentPermissions]
-
+    pagination_class = CustomPagination
 class MySecureView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
