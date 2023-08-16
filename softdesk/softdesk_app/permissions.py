@@ -24,3 +24,8 @@ class CommentPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
         if view.action == 'list':
             return True
+        elif view.action in ['create', 'update', 'partial_update', 'destroy']:
+
+            return True  # Si l'utilisateur a la permission
+        else:
+            return False  # Pour toute autre action, l'accès est refusé

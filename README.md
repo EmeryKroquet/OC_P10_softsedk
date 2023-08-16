@@ -146,9 +146,11 @@ cd softdesk
 Démarrez le serveur local avec la commande:
 
 ```python
+
 python
 manage.py
 runserver
+
 ```
 
 <a id="docs"></a>

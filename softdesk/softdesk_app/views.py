@@ -1,13 +1,12 @@
-from rest_framework import viewsets, permissions
-from django_filters import rest_framework as filters
-from rest_framework.response import Response
-from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
+from django_filters import rest_framework as filters
+from rest_framework import viewsets, permissions
 from rest_framework.pagination import PageNumberPagination
 
 from .models import CustomUser, Project, Issue, Comment
-from .serializers import CustomUserSerializer, ProjectSerializer, IssueSerializer, CommentSerializer
 from .permissions import IsProjectContributor, IssuePermissions, CommentPermissions
+from .serializers import CustomUserSerializer, ProjectSerializer, IssueSerializer, CommentSerializer
+
 
 class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
@@ -67,10 +66,12 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated, CommentPermissions]
     pagination_class = CustomPagination
-class MySecureView(APIView):
+
+
+""" class MySecureView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         user = request.user
         message = f"Hello, {user.username}! You're authenticated."
-        return Response({'message': message})
+        return Response({'message': message}) """
