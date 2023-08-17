@@ -1,8 +1,9 @@
 # models.py
 
-from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.db import models
 from django.utils.translation import gettext_lazy as _
+
 
 # Modèle d'utilisateur personnalisé
 class CustomUser(AbstractUser):
@@ -29,7 +30,7 @@ class Project(models.Model):
         ('Android', 'Android'),
     ))
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='authored_projects')
-    contributors = models.ManyToManyField(CustomUser, related_name='contributed_projects')
+    contributor_users = models.ManyToManyField(CustomUser, related_name='contributed_projects')
 
 # Modèle pour les problèmes (issues)
 class Issue(models.Model):

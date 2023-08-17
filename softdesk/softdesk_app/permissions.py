@@ -10,13 +10,11 @@ class IsProjectContributor(permissions.BasePermission):
 
 
 class IssuePermissions(permissions.BasePermission):
-    def has_permission(self, request, view):
-        if view.action == 'list':
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
             return True
 
-        issue = view.get_object() if view.action in ['retrieve', 'update', 'partial_update', 'destroy'] else None
-        project = issue.project if issue else None
-
+        project = obj.project  # Get the project associated with the issue
         return project and (project.contributors.filter(id=request.user.id).exists() or project.author == request.user)
 
 
